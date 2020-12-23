@@ -1,8 +1,12 @@
 import { Request, Response, Router } from "express";
-import { validate } from "class-validator";
+import { isEmpty, validate } from "class-validator";
 import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 
-import { User } from "../entities/User";
+import User from "../entities/User";
+import config from "../config";
+import cookie from "cookie";
+import auth from "../middleware/auth";
 
 async function register(req: Request, res: Response) {
   const { email, username, password } = req.body;
@@ -16,15 +20,15 @@ async function register(req: Request, res: Response) {
         checkUsername,
       ]);
 
-      const errors = [];
+      const errors: any = {};
       if (isEmailExists) {
-        errors.push({ Email: "Email already exists" });
+        errors.email = "Email already exists";
       }
       if (isUsernameExists) {
-        errors.push({ Username: "Username already exists" });
+        errors.username = "Username already exists";
       }
 
-      if (errors.length) throw errors;
+      if (Object.keys(errors).length) throw errors;
     } catch (error) {
       console.log({ registerPromiseAllError: error });
       throw error;
@@ -55,8 +59,75 @@ async function register(req: Request, res: Response) {
   }
 }
 
+async function login(req: Request, res: Response) {
+  const { username, password } = req.body;
+
+  try {
+    let errors: any = {};
+
+    if (isEmpty(username)) errors.username = "Username is required";
+    if (isEmpty(password)) errors.password = "Password is required";
+
+    if (Object.keys(errors).length) throw errors;
+
+    const user = await User.findOne({ username });
+
+    if (!user) throw new Error("Invalid username or password");
+
+    const passwordMatches = await argon2.verify(user.password, password);
+
+    if (!passwordMatches) throw new Error("Invalid username or password");
+
+    const token = jwt.sign({ username }, config.JWT_SECRET);
+
+    const response = {
+      username: user.username,
+      email: user.email,
+      token,
+    };
+
+    res.set(
+      "Set-Cookie",
+      cookie.serialize("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 3600,
+        path: "/",
+      })
+    );
+
+    res.status(200).json({ user: response });
+  } catch (error) {
+    console.log({ loginError: error });
+    res.status(401).json({ error });
+  }
+}
+
+async function me(req: Request, res: Response) {
+  res.json({ user: res.locals.user });
+}
+
+async function logout(_: Request, res: Response) {
+  res.set(
+    "Set-Cookie",
+    cookie.serialize("token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      expires: new Date(0),
+      path: "/",
+    })
+  );
+
+  res.status(200).json({ success: true });
+}
+
 const router = Router();
 
 router.post("/register", register);
+router.post("/login", login);
+router.post("/me", auth, me);
+router.post("/logout", auth, logout);
 
 export default router;

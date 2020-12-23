@@ -1,15 +1,11 @@
 import { IsEmail, MinLength } from "class-validator";
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  BaseEntity,
-  Index,
-  CreateDateColumn,
-} from "typeorm";
+import { Entity, Column, Index, OneToMany } from "typeorm";
+
+import CommonEntity from "./Entity";
+import Post from "./Post";
 
 @Entity("users")
-export class User extends BaseEntity {
+export default class User extends CommonEntity {
   /**
    * The constructor function is for new User({...})
    * by which we don't need to use
@@ -19,9 +15,6 @@ export class User extends BaseEntity {
     super();
     Object.assign(this, user);
   }
-
-  @PrimaryGeneratedColumn()
-  id: number;
 
   @Index()
   @Column({ unique: true })
@@ -37,9 +30,11 @@ export class User extends BaseEntity {
   @MinLength(6)
   password: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @OneToMany(() => Post, post => post.user)
+  posts: Post[];
 
-  @CreateDateColumn()
-  updated_at: Date;
+  // @BeforeInsert()
+  // async hashPassword() {
+  //   this.password = await argon2.hash(this.password)
+  // }
 }
