@@ -48,8 +48,6 @@ async function register(req: Request, res: Response) {
 
     await user.save();
 
-    delete user.password;
-
     return res.json(user);
   } catch (error) {
     console.log({ registerError: error });
@@ -104,7 +102,7 @@ async function login(req: Request, res: Response) {
   }
 }
 
-async function me(req: Request, res: Response) {
+async function me(_: Request, res: Response) {
   res.json({ user: res.locals.user });
 }
 

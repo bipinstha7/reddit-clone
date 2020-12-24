@@ -5,8 +5,10 @@ import {
   ManyToOne,
   JoinColumn,
   BeforeInsert,
+  OneToMany,
 } from "typeorm";
 import { randomString, slugify } from "../utils/helper";
+import Comment from "./Comment";
 
 import CommonEntity from "./Entity";
 import Sub from "./Sub";
@@ -47,6 +49,9 @@ export default class Post extends CommonEntity {
   @ManyToOne(() => Sub, sub => sub.posts)
   @JoinColumn({ name: "sub_name", referencedColumnName: "name" })
   sub: Sub;
+
+  @OneToMany(() => Comment, comment => comment.post)
+  comments: Comment[];
 
   @BeforeInsert()
   makeIdAndSlug() {

@@ -5,6 +5,11 @@ export function randomString(length: number): string {
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
 
+  /**
+   * For large number of randomString,
+   * their might be a case where old and newly created may match,
+   * so we need to add timestamp or check the slug/string
+   */
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }

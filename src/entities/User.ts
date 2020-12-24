@@ -1,5 +1,6 @@
 import { IsEmail, MinLength } from "class-validator";
 import { Entity, Column, Index, OneToMany } from "typeorm";
+import { classToPlain, Exclude } from "class-transformer";
 
 import CommonEntity from "./Entity";
 import Post from "./Post";
@@ -26,6 +27,7 @@ export default class User extends CommonEntity {
   @MinLength(3)
   username: string;
 
+  @Exclude()
   @Column()
   @MinLength(6)
   password: string;
@@ -37,4 +39,8 @@ export default class User extends CommonEntity {
   // async hashPassword() {
   //   this.password = await argon2.hash(this.password)
   // }
+
+  toJSON() {
+    return classToPlain(this);
+  }
 }

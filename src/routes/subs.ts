@@ -2,7 +2,6 @@ import { Request, Response, Router } from "express";
 import { isEmpty } from "class-validator";
 import { getRepository } from "typeorm";
 
-import User from "../entities/User";
 import auth from "../middleware/auth";
 import Sub from "../entities/Sub";
 
