@@ -8,7 +8,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies.token;
 
-    if (!token) throw new Error("Unauthorized");
+    if (!token) throw new Error("INVALID_TOKEN");
 
     const { username }: any = jwt.verify(token, config.JWT_SECRET);
 
@@ -24,6 +24,6 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   } catch (error) {
     console.log({ authMiddlewareError: error });
 
-    res.status(401).json({ error: "Unauthorized" });
+    res.status(401).json({ error });
   }
 };

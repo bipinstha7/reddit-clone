@@ -3,6 +3,7 @@ import { createConnection } from "typeorm";
 import express from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import authRoutes from "./routes/auth";
 import postRoutes from "./routes/posts";
@@ -14,6 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
+app.use(cors());
 
 app.get("/", (_, res) => res.send("You are good to go."));
 app.use("/api/v1/auth", trim, authRoutes);

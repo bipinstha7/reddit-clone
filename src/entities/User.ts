@@ -1,4 +1,4 @@
-import { IsEmail, MinLength } from "class-validator";
+import { IsEmail, Length, MinLength } from "class-validator";
 import { Entity, Column, Index, OneToMany } from "typeorm";
 import { classToPlain, Exclude } from "class-transformer";
 
@@ -19,10 +19,12 @@ export default class User extends CommonEntity {
 
   @Index()
   @Column({ unique: true })
-  @IsEmail()
+  @IsEmail(undefined, { message: "Must be a valid email address" })
+  @Length(1, 255, { message: "Email is empty" })
   email: string;
 
   @Index()
+  @Length(3, 255, { message: "Must be atleast 3 characters" })
   @Column({ unique: true })
   @MinLength(3)
   username: string;

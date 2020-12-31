@@ -12,6 +12,17 @@ async function register(req: Request, res: Response) {
   const { email, username, password } = req.body;
 
   try {
+    /**
+     * The new User({...}) called on User.ts constuctor function
+     * by which we don't need to use
+     * use.email = email; user.name = name
+     */
+    const user = new User({ email, username, password });
+    const errors = await validate(user, { validationError: { target: false } });
+    if (errors.length) {
+      return res.status(400).json({ errors: mapErrors(errors) });
+    }
+
     const checkEmail = User.findOne({ email });
     const checkUsername = User.findOne({ username });
     try {
@@ -33,15 +44,6 @@ async function register(req: Request, res: Response) {
       console.log({ registerPromiseAllError: error });
       throw error;
     }
-
-    /**
-     * The new User({...}) called on User.ts constuctor function
-     * by which we don't need to use
-     * use.email = email; user.name = name
-     */
-    const user = new User({ email, username, password });
-    const errors = await validate(user, { validationError: { target: false } });
-    if (errors.length) return res.status(400).json({ errors });
 
     const hash = await argon2.hash(password);
     user.password = hash;
@@ -129,3 +131,14 @@ router.post("/me", auth, me);
 router.post("/logout", auth, logout);
 
 export default router;
+
+function mapErrors(errors: object[]) {
+  let mappedErrors: any = {};
+  errors.forEach((error: any) => {
+    const key = error.property;
+    const value = Object.values(error.constraints)[0];
+    mappedErrors[key] = value;
+  });
+
+  return mappedErrors;
+}
