@@ -53,9 +53,8 @@ async function register(req: Request, res: Response) {
     return res.json(user);
   } catch (error) {
     console.log({ registerError: error });
-    const err =
-      process.env.NODE_ENV !== "production" ? error : "Something went wrong";
-    res.status(500).json({ err });
+
+    res.status(500).json({ error });
   }
 }
 
@@ -72,11 +71,11 @@ async function login(req: Request, res: Response) {
 
     const user = await User.findOne({ username });
 
-    if (!user) throw new Error("Invalid username or password");
+    if (!user) throw "Invalid username or password";
 
     const passwordMatches = await argon2.verify(user.password, password);
 
-    if (!passwordMatches) throw new Error("Invalid username or password");
+    if (!passwordMatches) throw "Invalid username or password";
 
     const token = jwt.sign({ username }, config.JWT_SECRET);
 
@@ -88,7 +87,7 @@ async function login(req: Request, res: Response) {
 
     res.set(
       "Set-Cookie",
-      cookie.serialize("token", token, {
+      cookie.serialize("authToken", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",

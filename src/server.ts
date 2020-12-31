@@ -9,13 +9,20 @@ import authRoutes from "./routes/auth";
 import postRoutes from "./routes/posts";
 import subRoutes from "./routes/subs";
 import trim from "./middleware/trim";
+import config from "./config";
 
 const app = express();
 
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: config.ORIGIN,
+    optionsSuccessStatus: 200,
+  })
+);
 
 app.get("/", (_, res) => res.send("You are good to go."));
 app.use("/api/v1/auth", trim, authRoutes);

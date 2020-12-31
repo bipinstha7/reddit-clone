@@ -30,6 +30,7 @@ const api = (method, router, url, variables) =>
       params: method === "get" ? variables : undefined,
       data: method !== "get" ? variables : undefined,
       paramsSerializer: objectToQueryString,
+      withCredentials: true,
     }).then(
       response => {
         resolve(response.data);

@@ -8,13 +8,13 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies.token;
 
-    if (!token) throw new Error("INVALID_TOKEN");
+    if (!token) throw "INVALID_TOKEN";
 
     const { username }: any = jwt.verify(token, config.JWT_SECRET);
 
     const user = await User.findOne({ username });
 
-    if (!user) throw new Error("Unauthenticated");
+    if (!user) throw "Unauthenticated";
 
     const response = { username: user.username, email: user.email };
 

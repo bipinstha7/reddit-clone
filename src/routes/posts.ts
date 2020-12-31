@@ -10,7 +10,7 @@ async function createPost(req: Request, res: Response) {
 
   const user = res.locals.user;
 
-  if (!title.trim()) throw new Error("Title is required");
+  if (!title.trim()) throw "Title is required";
 
   try {
     const subRecord = await Sub.findOneOrFail({ name: sub });
