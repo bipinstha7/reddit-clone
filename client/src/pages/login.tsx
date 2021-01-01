@@ -34,7 +34,7 @@ export default function Login() {
     try {
       await API.post("/auth/login", payload);
 
-      router.push("/home");
+      router.push("/");
     } catch (error) {
       console.log({ authLoginError: error });
       setState({ ...state, errors: error });
@@ -42,7 +42,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex bg-white">
       <Head>
         <title>Login</title>
       </Head>

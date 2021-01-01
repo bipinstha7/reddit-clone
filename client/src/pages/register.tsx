@@ -61,7 +61,7 @@ export default function Register() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex bg-white">
       <Head>
         <title>Register</title>
         <link rel="icon" href="/favicon.ico" />
