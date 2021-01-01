@@ -30,7 +30,7 @@ async function getPosts(_: Request, res: Response) {
   try {
     const posts = await Post.find({ order: { created_at: "DESC" } });
 
-    res.json(posts);
+    res.json({ data: posts });
   } catch (error) {
     console.log({ getPostError: error });
     res.status(500).json({ error: "Something went wrong" });

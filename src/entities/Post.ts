@@ -1,3 +1,4 @@
+// import { Expose } from "class-transformer";
 import {
   Entity,
   Column,
@@ -6,6 +7,7 @@ import {
   JoinColumn,
   BeforeInsert,
   OneToMany,
+  AfterLoad,
 } from "typeorm";
 import { randomString, slugify } from "../utils/helper";
 import Comment from "./Comment";
@@ -42,6 +44,9 @@ export default class Post extends CommonEntity {
   @Column()
   sub_name: string;
 
+  @Column()
+  username: string;
+
   @ManyToOne(() => User, user => user.posts)
   @JoinColumn({ name: "username", referencedColumnName: "username" })
   user: User;
@@ -52,6 +57,19 @@ export default class Post extends CommonEntity {
 
   @OneToMany(() => Comment, comment => comment.post)
   comments: Comment[];
+
+  /* Either 1 or 2 works */
+  /* 2 */
+  // @Expose() get url(): string {
+  //   return `/r/${this.sub_name}/${this.identifier}/${this.slug}`;
+  // }
+
+  /* 2 */
+  protected url: string;
+  @AfterLoad()
+  createFields() {
+    this.url = `/r/${this.sub_name}/${this.identifier}/${this.slug}`;
+  }
 
   @BeforeInsert()
   makeIdAndSlug() {
