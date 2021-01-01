@@ -4,6 +4,7 @@ import { classToPlain, Exclude } from "class-transformer";
 
 import CommonEntity from "./Entity";
 import Post from "./Post";
+import Vote from "./Vote";
 
 @Entity("users")
 export default class User extends CommonEntity {
@@ -36,6 +37,9 @@ export default class User extends CommonEntity {
 
   @OneToMany(() => Post, post => post.user)
   posts: Post[];
+
+  @OneToMany(() => Vote, vote => vote.user)
+  votes: Vote[];
 
   // @BeforeInsert()
   // async hashPassword() {

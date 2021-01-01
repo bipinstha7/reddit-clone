@@ -5,12 +5,14 @@ import {
   ManyToOne,
   JoinColumn,
   BeforeInsert,
+  OneToMany,
 } from "typeorm";
 import { randomString } from "../utils/helper";
 
 import CommonEntity from "./Entity";
 import Post from "./Post";
 import User from "./User";
+import Vote from "./Vote";
 
 @Entity("comments")
 export default class Comment extends CommonEntity {
@@ -41,6 +43,15 @@ export default class Comment extends CommonEntity {
   @ManyToOne(() => Post, post => post.comments, { nullable: false })
   @JoinColumn({ name: "post_id", referencedColumnName: "id" })
   post: Post;
+
+  @OneToMany(() => Vote, vote => vote.comment)
+  votes: Vote[];
+
+  protected userVote: number;
+  setUserVote(user: User) {
+    const index = this.votes?.findIndex(v => v.username === user.username);
+    this.userVote = index > -1 ? this.votes[index].value : 0;
+  }
 
   @BeforeInsert()
   makeIdAndSlug() {

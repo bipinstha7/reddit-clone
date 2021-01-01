@@ -8,6 +8,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth";
 import postRoutes from "./routes/posts";
 import subRoutes from "./routes/subs";
+import voteRoutes from "./routes/votes";
 import trim from "./middleware/trim";
 import config from "./config";
 
@@ -28,6 +29,7 @@ app.get("/", (_, res) => res.send("You are good to go."));
 app.use("/api/v1/auth", trim, authRoutes);
 app.use("/api/v1/posts", trim, postRoutes);
 app.use("/api/v1/subs", trim, subRoutes);
+app.use("/api/v1/vote", trim, voteRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, async () => {

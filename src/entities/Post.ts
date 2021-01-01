@@ -1,4 +1,3 @@
-// import { Expose } from "class-transformer";
 import {
   Entity,
   Column,
@@ -15,6 +14,7 @@ import Comment from "./Comment";
 import CommonEntity from "./Entity";
 import Sub from "./Sub";
 import User from "./User";
+import Vote from "./Vote";
 
 @Entity("posts")
 export default class Post extends CommonEntity {
@@ -58,6 +58,9 @@ export default class Post extends CommonEntity {
   @OneToMany(() => Comment, comment => comment.post)
   comments: Comment[];
 
+  @OneToMany(() => Vote, vote => vote.post)
+  votes: Vote[];
+
   /* Either 1 or 2 works */
   /* 2 */
   // @Expose() get url(): string {
@@ -67,8 +70,29 @@ export default class Post extends CommonEntity {
   /* 2 */
   protected url: string;
   @AfterLoad()
-  createFields() {
+  createUrl() {
     this.url = `/r/${this.sub_name}/${this.identifier}/${this.slug}`;
+  }
+
+  protected commentCount: number;
+  @AfterLoad()
+  countComment() {
+    this.commentCount = this.comments?.length;
+  }
+
+  protected userVote: number;
+  setUserVote(user: User) {
+    const index = this.votes?.findIndex(v => v.username === user.username);
+    this.userVote = index > -1 ? this.votes[index].value : 0;
+  }
+
+  protected voteScore: number;
+  @AfterLoad()
+  countVote() {
+    this.voteScore = this.votes?.reduce(
+      (prev, curr) => prev + (curr.value || 0),
+      0
+    );
   }
 
   @BeforeInsert()

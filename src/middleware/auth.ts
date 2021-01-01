@@ -6,7 +6,7 @@ import config from "../config";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.cookies.token;
+    const token = req.cookies.authToken;
 
     if (!token) throw "INVALID_TOKEN";
 
