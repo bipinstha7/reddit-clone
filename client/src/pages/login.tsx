@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 import useApi from "api/index";
 import Input from "components/input";
+import { useAuthDispatch, useAuthState } from "context/auth";
 
 interface states {
   username: string;
@@ -14,12 +15,14 @@ interface states {
 
 export default function Login() {
   const { API } = useApi();
+  const dispatch = useAuthDispatch();
   const router = useRouter();
   const [state, setState] = useState<states>({
     username: "",
     password: "",
     errors: "",
   });
+  const { authenticated } = useAuthState();
 
   const { username, password, errors } = state;
 
@@ -32,7 +35,13 @@ export default function Login() {
 
     const payload = { username, password };
     try {
-      await API.post("/auth/login", payload);
+      const res: any = await API.post("/auth/login", payload);
+
+      console.log({ loginResponse: res });
+      dispatch({
+        type: "LOGIN",
+        payload: res.data,
+      });
 
       router.push("/");
     } catch (error) {
@@ -40,6 +49,10 @@ export default function Login() {
       setState({ ...state, errors: error });
     }
   };
+
+  if (authenticated) {
+    router.push("/");
+  }
 
   return (
     <div className="flex bg-white">

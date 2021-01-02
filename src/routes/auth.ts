@@ -97,7 +97,7 @@ async function login(req: Request, res: Response) {
       })
     );
 
-    res.status(200).json({ user: response });
+    res.status(200).json({ data: response });
   } catch (error) {
     console.log({ loginError: error });
     res.status(401).json({ error });
@@ -111,7 +111,7 @@ async function me(_: Request, res: Response) {
 async function logout(_: Request, res: Response) {
   res.set(
     "Set-Cookie",
-    cookie.serialize("token", "", {
+    cookie.serialize("authToken", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
