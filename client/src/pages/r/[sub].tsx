@@ -9,6 +9,7 @@ import { Sub } from "types";
 import { ChangeEvent, createRef, useEffect, useState } from "react";
 import { useAuthState } from "context/auth";
 import useApi from "api";
+import SubSidebar from "components/subSidebar";
 
 export default function SubPage() {
   const { API } = useApi();
@@ -68,6 +69,7 @@ export default function SubPage() {
     ));
   }
 
+  /* TODO: refactor to own separate components */
   return (
     <>
       <Head>
@@ -133,6 +135,7 @@ export default function SubPage() {
           <div className="container flex pt-5">
             {/* posts and sidebar */}
             <div className="w-160">{postMarkup}</div>
+            <SubSidebar sub={sub} />
           </div>
         </>
       ) : null}

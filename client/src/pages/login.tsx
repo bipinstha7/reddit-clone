@@ -43,7 +43,8 @@ export default function Login() {
         payload: res.data,
       });
 
-      router.push("/");
+      // router.push("/");
+      router.back();
     } catch (error) {
       console.log({ authLoginError: error });
       setState({ ...state, errors: error });

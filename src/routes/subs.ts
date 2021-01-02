@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { isEmpty } from "class-validator";
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -11,6 +11,7 @@ import Sub from "../entities/Sub";
 import Post from "../entities/Post";
 import { randomString } from "../utils/helper";
 import User from "../entities/User";
+import config from "../config";
 
 async function createSub(req: Request, res: Response) {
   const { name, title, description } = req.body;
@@ -141,9 +142,44 @@ async function uploadSubImage(req: Request, res: Response) {
   }
 }
 
+async function topSubs(_: Request, res: Response) {
+  try {
+    /**
+     * SELECT s.title, s.name
+     * COALESCE('http://localhost:4000/images' || s."imageUrn", 'https://styles.redditmedia.com/t5_2qh1i/styles/communityIcon_tijjpyw1qe201.png) as imageUrl
+     * count(p.id) s 'postCount'
+     * From subs s
+     * LEFT JOIN posts p ON s.name = p.sub_name
+     * GROUP BY s.title, s.name, imageUrl
+     * ORDER BY "postCount" DESC
+     * LIMIT 5
+     */
+
+    const imageUrlExp = `COALESCE('${config.APP_URL}/images/' || s."imageUrn", 'https://styles.redditmedia.com/t5_2qh1i/styles/communityIcon_tijjpyw1qe201.png')`;
+    const subs = await getConnection()
+      .createQueryBuilder()
+      .select(
+        `s.title, s.name, ${imageUrlExp} as "imageUrl", count(p.id) as "postCount"`
+      )
+      .from(Sub, "s")
+      .leftJoin(Post, "p", `s.name = p.sub_name`)
+      .groupBy(`s.title, s.name, "imageUrl"`)
+      .orderBy(`"postCount"`, "DESC")
+      .limit(5)
+      .execute();
+
+    res.json({ data: subs });
+  } catch (error) {
+    console.log({ topSubError: error });
+
+    res.status(500).json({ error: "Something went wrong" });
+  }
+}
+
 const router = Router();
 
 router.post("/", userAuth, auth, createSub);
+router.get("/top-subs", topSubs);
 router.get("/:name", userAuth, getSub);
 router.post(
   "/:name/image",

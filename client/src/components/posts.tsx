@@ -4,6 +4,7 @@ import useSWR from "swr";
 // import useApi from "api/index";
 // import { Post } from "types";
 import PostComp from "components/post";
+import Sidebar from "components/sidebar";
 
 export default function Posts() {
   // const { API } = useApi();
@@ -28,6 +29,7 @@ export default function Posts() {
           <PostComp post={post} key={post.identifier} />
         ))}
       </div>
+      <Sidebar />
     </div>
   );
 }
