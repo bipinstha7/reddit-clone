@@ -5,6 +5,7 @@ import { getRepository } from "typeorm";
 import auth from "../middleware/auth";
 import userAuth from "../middleware/user";
 import Sub from "../entities/Sub";
+import Post from "../entities/Post";
 
 async function createSub(req: Request, res: Response) {
   const { name, title, description } = req.body;
@@ -39,8 +40,34 @@ async function createSub(req: Request, res: Response) {
   }
 }
 
+async function getSub(req: Request, res: Response) {
+  const { name } = req.params;
+
+  try {
+    const sub = await Sub.findOneOrFail({ name });
+    const posts = await Post.find({
+      where: { sub },
+      order: { created_at: "DESC" },
+      relations: ["comments", "votes"],
+    });
+
+    sub.posts = posts;
+
+    if (res.locals.user) {
+      sub.posts.forEach(p => p.setUserVote(res.locals.user));
+    }
+
+    res.json({ data: sub });
+  } catch (error) {
+    console.log({ getSubError: error });
+
+    res.status(404).json({ error: "sub not found" });
+  }
+}
+
 const router = Router();
 
 router.post("/", userAuth, auth, createSub);
+router.get("/:name", userAuth, getSub);
 
 export default router;

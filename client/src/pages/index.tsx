@@ -4,12 +4,12 @@ import Posts from "components/posts";
 
 export default function Home() {
   return (
-    <div className="pt-12">
+    <>
       <Head>
         <title>reddit: the front page of the internet</title>
       </Head>
       <Posts />
-    </div>
+    </>
   );
 }
 
