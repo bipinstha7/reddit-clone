@@ -1,4 +1,13 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
+// import { Expose } from "class-transformer";
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  AfterLoad,
+} from "typeorm";
+import config from "../config";
 
 import CommonEntity from "./Entity";
 import Post from "./Post";
@@ -40,4 +49,34 @@ export default class Sub extends CommonEntity {
 
   @OneToMany(() => Post, post => post.sub)
   posts: Post[];
+
+  // @Expose()
+  // get imageUrl(): string {
+  //   return this.imageUrn
+  //     ? `${config.APP_URL}/images/${this.imageUrn}`
+  //     : "https://styles.redditmedia.com/t5_2qh1i/styles/communityIcon_tijjpyw1qe201.png";
+  // }
+
+  // @Expose()
+  // get bannerUrl(): string | undefined {
+  //   return this.bannerUrn
+  //     ? `${config.APP_URL}/images/${this.bannerUrn}`
+  //     : undefined;
+  // }
+
+  protected imageUrl: string;
+  @AfterLoad()
+  getImageUrl() {
+    this.imageUrl = this.imageUrn
+      ? `${config.APP_URL}/images/${this.imageUrn}`
+      : "https://styles.redditmedia.com/t5_2qh1i/styles/communityIcon_tijjpyw1qe201.png";
+  }
+
+  protected bannerUrl: string | undefined;
+  @AfterLoad()
+  getBannerUrl() {
+    this.bannerUrl = this.bannerUrn
+      ? `${config.APP_URL}/images/${this.bannerUrn}`
+      : undefined;
+  }
 }

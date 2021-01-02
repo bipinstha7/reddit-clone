@@ -71,12 +71,6 @@ async function getSub(req: Request, res: Response) {
 }
 
 const ownSub = async (req: Request, res: Response, next: NextFunction) => {
-  const type = req.body.type;
-
-  if (type !== "image" && type !== "banner") {
-    return res.status(400).json({ error: "Invalid type" });
-  }
-
   const user: User = res.locals.user;
 
   try {
@@ -118,6 +112,11 @@ async function uploadSubImage(req: Request, res: Response) {
   try {
     const type = req.body.type;
 
+    if (type !== "image" && type !== "banner") {
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({ error: "Invalid type" });
+    }
+
     const urn = req.file.filename;
     let oldImageUrn: string = "";
     if (type === "image") {
@@ -133,6 +132,8 @@ async function uploadSubImage(req: Request, res: Response) {
     if (oldImageUrn) {
       fs.unlinkSync(`public\\images\\${oldImageUrn}`);
     }
+
+    res.json({ success: true });
   } catch (error) {
     console.log({ uploadImageError: error });
 

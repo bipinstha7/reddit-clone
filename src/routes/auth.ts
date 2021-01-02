@@ -105,7 +105,7 @@ async function login(req: Request, res: Response) {
 }
 
 async function me(_: Request, res: Response) {
-  res.json({ user: res.locals.user });
+  res.json({ data: res.locals.user });
 }
 
 async function logout(_: Request, res: Response) {

@@ -8,8 +8,9 @@ import { getStoredAuthToken, removeStoredAuthToken } from "utils/authToken";
 
 const defaults = {
   baseURL: process.env.API_URL || "http://localhost:4000/api/v1",
-  headers: () => ({
-    "Content-Type": "application/json",
+  headers: type => ({
+    "Content-Type":
+      type === "image" ? "miltipart/form-data" : "application/json",
     Authorization: getStoredAuthToken() ? `${getStoredAuthToken()}` : undefined,
   }),
   error: {
@@ -26,7 +27,7 @@ const api = (method, router, url, variables) =>
     axios({
       url: `${defaults.baseURL}${url}`,
       method,
-      headers: defaults.headers(),
+      headers: defaults.headers(url.includes("image") ? "image" : ""),
       params: method === "get" ? variables : undefined,
       data: method !== "get" ? variables : undefined,
       paramsSerializer: objectToQueryString,
