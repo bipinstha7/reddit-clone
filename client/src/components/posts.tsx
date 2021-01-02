@@ -1,26 +1,30 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
+import useSWR from "swr";
 
-import useApi from "api/index";
-import { Post } from "types";
+// import useApi from "api/index";
+// import { Post } from "types";
 import PostComp from "components/post";
 
 export default function Posts() {
-  const { API } = useApi();
-  const [posts, setPosts] = useState<Post[]>([]);
+  // const { API } = useApi();
+  // const [posts, setPosts] = useState<Post[]>([]);
 
-  useEffect(() => {
-    API.get("/posts")
-      .then((res: any) => {
-        setPosts(res.data);
-      })
-      .catch(err => {
-        console.log({ getPostError: err });
-      });
-  }, []);
+  // useEffect(() => {
+  //   API.get("/posts")
+  //     .then((res: any) => {
+  //       setPosts(res.data);
+  //     })
+  //     .catch(err => {
+  //       console.log({ getPostError: err });
+  //     });
+  // }, []);
+
+  const { data: posts } = useSWR("/posts");
+
   return (
     <div className="container flex pt-4">
       <div className="w-160">
-        {posts.map(post => (
+        {posts?.map(post => (
           <PostComp post={post} key={post.identifier} />
         ))}
       </div>

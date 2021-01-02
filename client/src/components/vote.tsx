@@ -4,8 +4,6 @@ import classnames from "classnames";
 export default function Vote({ post }) {
   const { API } = useApi();
 
-  console.log({ post });
-
   const vote = async value => {
     try {
       const res = API.post("/vote", {
