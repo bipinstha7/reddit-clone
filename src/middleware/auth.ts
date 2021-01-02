@@ -1,24 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
 
 import User from "../entities/User";
-import config from "../config";
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+export default async (_: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.cookies.authToken;
-
-    if (!token) throw "INVALID_TOKEN";
-
-    const { username }: any = jwt.verify(token, config.JWT_SECRET);
-
-    const user = await User.findOne({ username });
+    const user: User | undefined = res.locals.user;
 
     if (!user) throw "Unauthenticated";
-
-    const response = { username: user.username, email: user.email };
-
-    res.locals.user = response;
 
     next();
   } catch (error) {

@@ -1,14 +1,29 @@
-import Head from "next/head";
+import { useEffect, useState } from "react";
 
-import Posts from "components/posts";
+import useApi from "api/index";
+import { Post } from "types";
+import PostComp from "components/post";
 
-export default function Home() {
+export default function Posts() {
+  const { API } = useApi();
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    API.get("/posts")
+      .then((res: any) => {
+        setPosts(res.data);
+      })
+      .catch(err => {
+        console.log({ getPostError: err });
+      });
+  }, []);
   return (
-    <div className="pt-12">
-      <Head>
-        <title>reddit: the front page of the internet</title>
-      </Head>
-      <Posts />
+    <div className="container flex pt-4">
+      <div className="w-160">
+        {posts.map(post => (
+          <PostComp post={post} key={post.identifier} />
+        ))}
+      </div>
     </div>
   );
 }

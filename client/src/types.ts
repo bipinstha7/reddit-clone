@@ -11,4 +11,7 @@ export interface Post {
 
   // virtual field
   url: string;
+  voteScore?: Number;
+  commentCount?: Number;
+  useVote?: Number;
 }

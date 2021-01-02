@@ -1,3 +1,4 @@
+import { classToPlain, Exclude } from "class-transformer";
 import {
   Entity,
   Column,
@@ -55,9 +56,11 @@ export default class Post extends CommonEntity {
   @JoinColumn({ name: "sub_name", referencedColumnName: "name" })
   sub: Sub;
 
+  @Exclude()
   @OneToMany(() => Comment, comment => comment.post)
   comments: Comment[];
 
+  @Exclude()
   @OneToMany(() => Vote, vote => vote.post)
   votes: Vote[];
 
@@ -99,5 +102,9 @@ export default class Post extends CommonEntity {
   makeIdAndSlug() {
     this.identifier = randomString(7);
     this.slug = slugify(this.title);
+  }
+
+  toJSON() {
+    return classToPlain(this);
   }
 }

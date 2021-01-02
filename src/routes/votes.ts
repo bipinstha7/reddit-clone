@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import User from "../entities/User";
 import Post from "../entities/Post";
 import auth from "../middleware/auth";
+import userAuth from "../middleware/user";
 import Comment from "../entities/Comment";
 import Vote from "../entities/Vote";
 
@@ -69,6 +70,6 @@ async function vote(req: Request, res: Response) {
 }
 
 const router = Router();
-router.post("/", auth, vote);
+router.post("/", userAuth, auth, vote);
 
 export default router;

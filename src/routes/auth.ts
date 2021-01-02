@@ -7,6 +7,7 @@ import User from "../entities/User";
 import config from "../config";
 import cookie from "cookie";
 import auth from "../middleware/auth";
+import userAuth from "../middleware/user";
 
 async function register(req: Request, res: Response) {
   const { email, username, password } = req.body;
@@ -126,8 +127,8 @@ const router = Router();
 
 router.post("/register", register);
 router.post("/login", login);
-router.post("/me", auth, me);
-router.post("/logout", auth, logout);
+router.post("/me", userAuth, auth, me);
+router.post("/logout", userAuth, auth, logout);
 
 export default router;
 
