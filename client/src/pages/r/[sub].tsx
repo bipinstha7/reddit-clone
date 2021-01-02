@@ -9,8 +9,6 @@ export default function Sub() {
 
   const { data: sub, error } = useSWR(subName ? `/subs/${subName}` : null);
 
-  console.log({ error });
-
   if (error) {
     router.push("/");
   }

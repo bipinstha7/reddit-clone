@@ -24,6 +24,7 @@ app.use(
     optionsSuccessStatus: 200,
   })
 );
+app.use(express.static("public"));
 
 app.get("/", (_, res) => res.send("You are good to go."));
 app.use("/api/v1/auth", trim, authRoutes);
