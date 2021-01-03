@@ -11,6 +11,6 @@ module.exports = {
     return config;
   },
   images: {
-    domains: ["www.styles.redditmedia.com", "localhost"],
+    domains: ["styles.redditmedia.com", "localhost"],
   },
 };
