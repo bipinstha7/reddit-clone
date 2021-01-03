@@ -7,12 +7,13 @@ import { Post } from "types";
 
 interface PostProps {
   post: Post;
+  singlePost?: boolean;
 }
 
-export default function PostFn({ post }: PostProps) {
+export default function PostFn({ post, singlePost }: PostProps) {
   return (
     <div className="flex mb-4 bg-white rounded">
-      <Vote post={post} />
+      <Vote post={post} singlePost={singlePost} />
       <div className="w-full p-2">
         <PostHeader post={post} />
         <Link href={post.url}>

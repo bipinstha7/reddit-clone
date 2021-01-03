@@ -10,6 +10,7 @@ export interface Post {
   body?: string;
   created_at: string;
   updated_at: string;
+  sub?: Sub;
 
   // virtual field
   url: string;
