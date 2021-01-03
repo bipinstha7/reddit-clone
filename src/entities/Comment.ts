@@ -6,6 +6,7 @@ import {
   JoinColumn,
   BeforeInsert,
   OneToMany,
+  AfterLoad,
 } from "typeorm";
 import { randomString } from "../utils/helper";
 
@@ -51,6 +52,15 @@ export default class Comment extends CommonEntity {
   setUserVote(user: User) {
     const index = this.votes?.findIndex(v => v.username === user.username);
     this.userVote = index > -1 ? this.votes[index].value : 0;
+  }
+
+  protected voteScore: number;
+  @AfterLoad()
+  countVote() {
+    this.voteScore = this.votes?.reduce(
+      (prev, curr) => prev + (curr.value || 0),
+      0
+    );
   }
 
   @BeforeInsert()

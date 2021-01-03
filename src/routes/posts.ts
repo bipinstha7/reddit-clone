@@ -87,11 +87,36 @@ async function commentOnPost(req: Request, res: Response) {
   }
 }
 
+async function getPostComments(req: Request, res: Response) {
+  const { identifier, slug } = req.params;
+
+  try {
+    const post = await Post.findOneOrFail({ identifier, slug });
+
+    const comments = await Comment.find({
+      where: { post },
+      order: { created_at: "DESC" },
+      relations: ["votes"],
+    });
+
+    if (res.locals.user) {
+      comments.forEach(c => c.setUserVote(res.locals.user));
+    }
+
+    res.json({ data: comments });
+  } catch (error) {
+    console.log({ getPostCommentError: error });
+
+    res.status(400).json({ error: "Something went wrong" });
+  }
+}
+
 const router = Router();
 
 router.post("/", userAuth, auth, createPost);
 router.get("/", userAuth, getPosts);
 router.get("/:identifier/:slug", userAuth, getPost);
 router.post("/:identifier/:slug/comments", userAuth, auth, commentOnPost);
+router.get("/:identifier/:slug/comments", userAuth, getPostComments);
 
 export default router;

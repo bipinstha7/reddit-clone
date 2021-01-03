@@ -26,6 +26,8 @@ async function vote(req: Request, res: Response) {
 
       comment = await Comment.findOneOrFail({ identifier: commentIdentifier });
       vote = await Vote.findOne({ user, comment });
+
+      console.log({ comment, vote });
     } else {
       // find vote by post
       vote = await Vote.findOne({ user, post });
